@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataModels.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebAPI.Services;
 
 namespace WebAPI
 {
@@ -28,12 +30,24 @@ namespace WebAPI
             services.AddControllers();
         }
 
+        internal static void SeedData()
+        {
+            ProductService<Product>.Products = new List<Product>()
+            {
+                new Product { Id=1, Name="Milk", Quantity=2 },
+                new Product { Id=2, Name="Banana", Quantity=6 },
+                new Product { Id=3, Name="Apple", Quantity=4 }
+            };
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                SeedData();
             }
 
             app.UseHttpsRedirection();

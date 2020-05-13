@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebAPI.Models;
+using DataModels.Models;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -12,41 +13,32 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        public ProductController()
-        {
-            Products = new List<Product>()
-            {
-                new Product { Id=1, Name="Milk", Quantity=2 },
-                new Product { Id=2, Name="Banana", Quantity=6 },
-                new Product { Id=2, Name="Apple", Quantity=4 }
-            };
-        }
         // GET: api/Product
         [HttpGet]
         public IEnumerable<Product> Get()
         {
-            return Products;
+            return ProductService<Product>.All();
         }
 
         // GET: api/Product/5
         [HttpGet("{id}", Name = "Get")]
         public Product Get(int id)
         {
-            return Products.FirstOrDefault(product => product.Id == id);
+            return ProductService<Product>.All().FirstOrDefault(product => product.Id == id);
         }
 
         // POST: api/Product
         [HttpPost]
         public void Post(Product product)
         {
-            Products.Add(product);
+            ProductService<Product>.Create(product);
         }
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
         public void Put(int id, Product product)
         {
-            var find = Products.FirstOrDefault(product => product.Id == id);
+            var find = ProductService<Product>.Products.FirstOrDefault(product => product.Id == id);
             if (find != null)
             {
                 find.Name = product.Name;
@@ -54,12 +46,15 @@ namespace WebAPI.Controllers
             }
         }
 
-        // DELETE: api/ApiWithActions/5
+        // DELETE: api/Product/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            var find = ProductService<Product>.Products.FirstOrDefault(product => product.Id == id);
+            if (find != null)
+            {
+                ProductService<Product>.Products.Remove(find);
+            }
         }
-
-        private List<Product> Products { get; set; }
     }
 }
